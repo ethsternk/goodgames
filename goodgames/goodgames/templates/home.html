@@ -1,0 +1,11 @@
+<body>
+    <h1>GoodGames</h1>
+    {% if data.profile %}
+        <p>Hello, {{ data.profile.name }}!
+        <p><a href="/logout/">Logout</a></p>
+    {% else %}
+        <p>new phone who dis</p>
+        <p><a href="/login/">Login</a></p>
+        <p><a href="/signup/">Signup</a></p>
+    {% endif %}
+</body>
