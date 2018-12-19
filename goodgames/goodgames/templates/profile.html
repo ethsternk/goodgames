@@ -1,0 +1,17 @@
+<body>
+    <h1><a href="/">GoodGames</a></h1>
+    <h2>{{ data.profile.name }}'s profile</h2>
+    <p>{{ data.profile.user.email }}</p>
+    <h3>Collection</h3>
+    {% for item in data.collection %}
+        <a href="/game/{{ item }}">
+            <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
+        </a>
+    {% endfor %}
+    <h3>Wishlist</h3>
+    {% for item in data.wishlist %}
+        <a href="/game/{{ item }}">
+            <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
+        </a>
+    {% endfor %}
+</body>

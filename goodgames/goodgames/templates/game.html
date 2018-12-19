@@ -25,4 +25,10 @@
             {% endfor %}
         </p>
     </div>
+    <div>
+        {% if data.user %}
+            <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
+            <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
+        {% endif %}
+    </div>
 </body>

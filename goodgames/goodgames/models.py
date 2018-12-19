@@ -15,12 +15,12 @@ class Profile(models.Model):
 
 
 class Game(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.CharField(max_length=1000)
-    platform = models.CharField(max_length=40)
+    igdb_id = models.IntegerField(default=None)
+    name = models.CharField(max_length=1000, default=None)
+    cover = models.CharField(max_length=1000, default=None)
 
     def __str__(self):
-        return self.title
+        return str(self.igdb_id)
 
 
 # class Reviews(models.Model):

@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from goodgames.models import Profile
+from goodgames.models import Profile, Game
 from goodgames.forms import SignupForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
@@ -8,15 +8,18 @@ import requests
 
 
 def home_view(request):
-    profile = None
+    user = None
     if request.user.username:
-        profile = Profile.objects.filter(user=request.user).first()
+        user = Profile.objects.filter(user=request.user).first()
     return render(request, 'home.html', {'data': {
-        'profile': profile,
+        'user': user,
     }})
 
 
 def game_view(request, game_id):
+    user = None
+    if request.user.username:
+        user = Profile.objects.filter(user=request.user).first()
     game = requests.get(
         "https://api-endpoint.igdb.com/games/" + str(game_id),
         headers={
@@ -37,6 +40,18 @@ def game_view(request, game_id):
     return render(request, 'game.html', {'data': {
         'game': game,
         # 'related': related,
+        'user': user,
+    }})
+
+
+def profile_view(request, profile_id):
+    profile = Profile.objects.filter(id=profile_id).first()
+    wishlist = profile.wishlist.all()
+    collection = profile.collection.all()
+    return render(request, 'profile.html', {'data': {
+        'profile': profile,
+        'wishlist': wishlist,
+        'collection': collection,
     }})
 
 
@@ -76,3 +91,35 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('homepage'))
+
+
+def wishlist_add_view(request, game_id):
+    user = Profile.objects.filter(user=request.user).first()
+    if Game.objects.filter(igdb_id=game_id):
+        user.wishlist.add(Game.objects.filter(igdb_id=game_id).first())
+    else:
+        game = requests.get(
+            "https://api-endpoint.igdb.com/games/" + str(game_id),
+            headers={
+                'user-key': '28db14f003075ce68766bfe55e7e9279',
+                'accept': 'application/json',
+            }
+        ).json()[0]
+        print(game)
+        new_game = Game.objects.create(
+            igdb_id=game_id,
+            name=game['name'],
+            cover=game['cover']['cloudinary_id'],
+        )
+        user.wishlist.add(new_game)
+    return HttpResponseRedirect('/profile/' + str(user.id))
+
+
+def collection_add_view(request, game_id):
+    user = Profile.objects.filter(user=request.user).first()
+    if Game.objects.filter(igdb_id=game_id):
+        user.collection.add(Game.objects.filter(igdb_id=game_id).first())
+    else:
+        game = Game.objects.create(igdb_id=game_id)
+        user.collection.add(game)
+    return HttpResponseRedirect('/profile/' + str(user.id))
