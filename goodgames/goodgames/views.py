@@ -3,6 +3,7 @@ from goodgames.models import Profile
 from goodgames.forms import SignupForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
+import requests
 # from django.contrib.auth.decorators import login_required
 
 
@@ -12,6 +13,30 @@ def home_view(request):
         profile = Profile.objects.filter(user=request.user).first()
     return render(request, 'home.html', {'data': {
         'profile': profile,
+    }})
+
+
+def game_view(request, game_id):
+    game = requests.get(
+        "https://api-endpoint.igdb.com/games/" + str(game_id),
+        headers={
+            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'accept': 'application/json',
+        }
+    ).json()[0]
+    # related = []
+    # for item in game['games']:
+    #     print(item)
+    #     related.append(requests.get(
+    #         "https://api-endpoint.igdb.com/games/" + str(item),
+    #         headers={
+    #             'user-key': '28db14f003075ce68766bfe55e7e9279',
+    #             'accept': 'application/json',
+    #         }
+    #     ).json()[0])
+    return render(request, 'game.html', {'data': {
+        'game': game,
+        # 'related': related,
     }})
 
 

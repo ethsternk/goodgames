@@ -1,0 +1,28 @@
+<body>
+    <h1><a href="/">GoodGames</a></h1>
+    <h2>{{ data.game.name }}</h2>
+    <p>{{ data.game. }}</p>
+    <p>{{ data.game.summary }}</p>
+    <img src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ data.game.cover.cloudinary_id }}.jpg" />
+    <h3>Screenshots</h3>
+    <div style="display: inline-block">
+        {% for item in data.game.screenshots %}
+            <a href="//images.igdb.com/igdb/image/upload/t_screenshot_huge/{{ item.cloudinary_id }}.jpg">
+                <img src="//images.igdb.com/igdb/image/upload/t_screenshot_med/{{ item.cloudinary_id }}.jpg" />
+            </a>
+        {% endfor %}
+    </div>
+    <h3>You might also like:</h3>
+    <div style="display: inline-block">
+        <!-- {% for item in data.related %}
+            <a href="/game/{{ item.id }}">
+                <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover.cloudinary_id }}.jpg" />
+            </a>
+        {% endfor %} -->
+        <p>
+            {% for item in data.game.games %}
+                <a href="/game/{{ item }}">{{ item }}</a> | 
+            {% endfor %}
+        </p>
+    </div>
+</body>
