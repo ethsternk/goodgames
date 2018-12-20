@@ -4,6 +4,22 @@
 <div>
     <h2>{{ data.profile.name }}'s profile</h2>
     <p>{{ data.profile.user.email }}</p>
+    {% if data.user != data.profile %}
+        <h3>They could borrow to you</h3>
+        {% for item in data.take %}
+            <a href="/game/{{ item }}">
+                <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
+            </a>
+        {% endfor %}
+        <h3>You could borrow to them</h3>
+        {% for item in data.give %}
+            <a href="/game/{{ item }}">
+                <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>This is you!</p>
+    {% endif %}
     <h3>Collection</h3>
     {% for item in data.collection %}
         <a href="/game/{{ item }}">

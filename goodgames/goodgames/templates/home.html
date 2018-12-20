@@ -15,4 +15,17 @@
         <input type="hidden" name="next" value="{{ request.GET.next }}">
         <input type="submit" value="Go">
     </form>
+    <h3>Popular right now</h3>
+    {% for item in data.popular %}
+        <ul>
+            <li>
+                <a href="/game/{{ item.id }}">
+                    <p>{{ item.name }}</p>
+                    {% if item.cover %}
+                        <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover.cloudinary_id }}.jpg" />
+                    {% endif %}
+                </a>
+            </li>
+        </ul>
+    {% endfor %}
 </body>
