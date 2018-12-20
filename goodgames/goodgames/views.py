@@ -29,7 +29,6 @@ def game_view(request, game_id):
     ).json()[0]
     # related = []
     # for item in game['games']:
-    #     print(item)
     #     related.append(requests.get(
     #         "https://api-endpoint.igdb.com/games/" + str(item),
     #         headers={
@@ -105,7 +104,6 @@ def wishlist_add_view(request, game_id):
                 'accept': 'application/json',
             }
         ).json()[0]
-        print(game)
         new_game = Game.objects.create(
             igdb_id=game_id,
             name=game['name'],
@@ -123,3 +121,16 @@ def collection_add_view(request, game_id):
         game = Game.objects.create(igdb_id=game_id)
         user.collection.add(game)
     return HttpResponseRedirect('/profile/' + str(user.id))
+
+
+def search_view(request):
+    results = requests.get(
+        'https://api-endpoint.igdb.com/games/?search=Halo&fields=id,name,cover',
+        headers={
+            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'accept': 'application/json',
+        }
+    ).json()
+    return render(request, 'search.html', {'data': {
+        'results': results,
+    }})

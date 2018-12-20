@@ -1,0 +1,14 @@
+<body>
+    <h1><a href="/">GoodGames</a></h1>
+    <h2>An example search for "Halo"</h2>
+    {% for item in data.results %}
+        <ul>
+            <li>
+                <p>{{ item.name }}</p>
+                <a href="/game/{{ item.id }}">
+                    <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover.cloudinary_id }}.jpg" />
+                </a>
+            </li>
+        </ul>
+    {% endfor %}
+</body>
