@@ -9,6 +9,10 @@
         <p><a href="/login/">Login</a></p>
         <p><a href="/signup/">Signup</a></p>
     {% endif %}
-    <p><a href="/game/1627">SUPER SMASH BROTHERS MELEEEEEEEEEEEEEEEEEEEE!!!!!!!!</a></p>
-</div>
-{% endblock %}
+    <form action="/search/" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+        <input type="submit" value="Go">
+    </form>
+</body>
