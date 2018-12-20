@@ -66,8 +66,8 @@ def game_view(request, game_id):
     #     ).json()[0])
     return render(request, 'game.html', {'data': {
         'game': game,
-        # 'related': related,
         'user': user,
+        # 'related': related,
     }})
 
 
