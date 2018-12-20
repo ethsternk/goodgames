@@ -11,9 +11,25 @@ def home_view(request):
     user = None
     if request.user.username:
         user = Profile.objects.filter(user=request.user).first()
-    return render(request, 'home.html', {'data': {
-        'user': user,
-    }})
+    form = SearchForm(None or request.POST)
+    if form.is_valid():
+        data = form.cleaned_data
+        results = requests.get(
+            'https://api-endpoint.igdb.com/games/?search=' +
+            data['search'] + '&fields=id,name,cover',
+            headers={
+                'user-key': '28db14f003075ce68766bfe55e7e9279',
+                'accept': 'application/json',
+            }
+        ).json()
+        return render(request, 'search.html', {
+            'data': {'results': results},
+            'form': form,
+        })
+    return render(request, 'home.html', {
+        'data': {'user': user},
+        'form': form,
+    })
 
 
 def game_view(request, game_id):
@@ -118,8 +134,19 @@ def collection_add_view(request, game_id):
     if Game.objects.filter(igdb_id=game_id):
         user.collection.add(Game.objects.filter(igdb_id=game_id).first())
     else:
-        game = Game.objects.create(igdb_id=game_id)
-        user.collection.add(game)
+        game = requests.get(
+            "https://api-endpoint.igdb.com/games/" + str(game_id),
+            headers={
+                'user-key': '28db14f003075ce68766bfe55e7e9279',
+                'accept': 'application/json',
+            }
+        ).json()[0]
+        new_game = Game.objects.create(
+            igdb_id=game_id,
+            name=game['name'],
+            cover=game['cover']['cloudinary_id'],
+        )
+        user.collection.add(new_game)
     return HttpResponseRedirect('/profile/' + str(user.id))
 
 
