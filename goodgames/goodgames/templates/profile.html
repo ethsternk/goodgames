@@ -1,5 +1,7 @@
-<body>
-    <h1><a href="/">GoodGames</a></h1>
+{% extends 'base.html' %}
+
+{% block main %}
+<div>
     <h2>{{ data.profile.name }}'s profile</h2>
     <p>{{ data.profile.user.email }}</p>
     <h3>Collection</h3>
@@ -14,4 +16,5 @@
             <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
         </a>
     {% endfor %}
-</body>
+</div>
+{% endblock %}

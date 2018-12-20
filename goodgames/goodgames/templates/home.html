@@ -1,5 +1,6 @@
-<body>
-    <h1><a href="/">GoodGames</a></h1>
+{% extends "base.html" %}
+{% block main %}
+<div>
     {% if data.user %}
         <p>Hello, <a href="profile/{{ data.user.id }}">{{ data.user.name }}</a>!</p>
         <p><a href="/logout/">Logout</a></p>
@@ -9,4 +10,5 @@
         <p><a href="/signup/">Signup</a></p>
     {% endif %}
     <p><a href="/game/1627">SUPER SMASH BROTHERS MELEEEEEEEEEEEEEEEEEEEE!!!!!!!!</a></p>
-</body>
+</div>
+{% endblock %}
