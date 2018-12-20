@@ -26,8 +26,20 @@ def home_view(request):
             'data': {'results': results},
             'form': form,
         })
+    popular = requests.get(
+        'https://api-endpoint.igdb.com/games/'
+        '?fields=id,name,cover,popularity&order=popularity:desc',
+        headers={
+            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'accept': 'application/json',
+        }
+    ).json()
+    print(popular[0])
     return render(request, 'home.html', {
-        'data': {'user': user},
+        'data': {
+            'user': user,
+            'popular': popular,
+        },
         'form': form,
     })
 
