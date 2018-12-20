@@ -60,13 +60,23 @@ def game_view(request, game_id):
 
 
 def profile_view(request, profile_id):
+    user = None
+    user_wish = None
+    user_coll = None
+    if request.user.username:
+        user = Profile.objects.filter(user=request.user).first()
+        user_wish = user.wishlist.all()
+        user_coll = user.collection.all()
     profile = Profile.objects.filter(id=profile_id).first()
-    wishlist = profile.wishlist.all()
-    collection = profile.collection.all()
+    profile_wish = profile.wishlist.all()
+    profile_coll = profile.collection.all()
     return render(request, 'profile.html', {'data': {
         'profile': profile,
-        'wishlist': wishlist,
-        'collection': collection,
+        'wishlist': profile_wish,
+        'collection': profile_coll,
+        'user': user,
+        'give': [game for game in profile_wish if game in user_coll],
+        'take': [game for game in profile_coll if game in user_wish],
     }})
 
 
