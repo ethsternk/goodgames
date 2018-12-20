@@ -10,3 +10,7 @@ class SignupForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=50)
     password = forms.CharField(widget=forms.PasswordInput())
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(max_length=50)

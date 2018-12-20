@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from goodgames.models import Profile, Game
-from goodgames.forms import SignupForm, LoginForm
+from goodgames.forms import SignupForm, LoginForm, SearchForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
@@ -124,13 +124,19 @@ def collection_add_view(request, game_id):
 
 
 def search_view(request):
-    results = requests.get(
-        'https://api-endpoint.igdb.com/games/?search=Halo&fields=id,name,cover',
-        headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
-            'accept': 'application/json',
-        }
-    ).json()
-    return render(request, 'search.html', {'data': {
-        'results': results,
-    }})
+    form = SearchForm(None or request.POST)
+    results = None
+    if form.is_valid():
+        data = form.cleaned_data
+        results = requests.get(
+            'https://api-endpoint.igdb.com/games/?search=' +
+            data['search'] + '&fields=id,name,cover',
+            headers={
+                'user-key': '28db14f003075ce68766bfe55e7e9279',
+                'accept': 'application/json',
+            }
+        ).json()
+    return render(request, 'search.html', {
+        'data': {'results': results},
+        'form': form,
+    })
