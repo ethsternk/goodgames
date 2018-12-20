@@ -1,0 +1,28 @@
+
+<!doctype html>
+<html lang="en">
+  {% include "head.html" %}
+
+  <body>
+    <!-- Navbar -->
+    {% include 'header.html' %}
+    <!-- End Navbar -->
+
+    <!-- Main -->
+    <main role="main" class="container">
+      {% block main %}
+      {% endblock %}
+    </main>
+    <!-- End Main -->
+    
+    <!-- footer -->
+    {% include "footer.html" %}
+    <!-- End footer -->
+    <!-- floating action button -->
+    {% include "fab.html" %}
+    <!-- Materialize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/index.js' %}"></script>
+  </body>
+</html>
