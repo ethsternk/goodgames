@@ -1,8 +1,4 @@
 from django import forms
-from datetime import datetime
-import requests
-
-from goodgames.models import Profile, Post
 
 
 class SignupForm(forms.Form):
@@ -19,3 +15,7 @@ class LoginForm(forms.Form):
 class PostForm(forms.Form):
     title = forms.CharField(max_length=100)
     body = forms.CharField(widget=forms.Textarea, max_length=10000)
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(max_length=50)

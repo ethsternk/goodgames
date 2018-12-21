@@ -1,5 +1,8 @@
-<body>
-    <h1><a href="/">GoodGames</a></h1>
+{% extends 'base.html' %}
+
+{% block main %}
+<div>
+    
     <h2>{{ data.game.name }}</h2>
     <p>{{ data.game. }}</p>
     <p>{{ data.game.summary }}</p>
@@ -45,3 +48,4 @@
         {% endfor %}
     </ul>
 </body>
+{% endblock %}

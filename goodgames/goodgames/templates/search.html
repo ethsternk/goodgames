@@ -1,22 +1,12 @@
-{% extends "base.html" %}
-{% block main %}
-<div>
-    {% if data.user %}
-        <p>Hello, <a href="profile/{{ data.user.id }}">{{ data.user.name }}</a>!</p>
-        <p><a href="/logout/">Logout</a></p>
-    {% else %}
-        <p>new phone who dis</p>
-        <p><a href="/login/">Login</a></p>
-        <p><a href="/signup/">Signup</a></p>
-    {% endif %}
+<body>
+    <h1><a href="/">GoodGames</a></h1>
     <form action="/search/" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" name="next" value="{{ request.GET.next }}">
         <input type="submit" value="Go">
     </form>
-    <h3>Popular right now</h3>
-    {% for item in data.popular %}
+    {% for item in data.results %}
         <ul>
             <li>
                 <a href="/game/{{ item.id }}">
@@ -29,4 +19,3 @@
         </ul>
     {% endfor %}
 </body>
-{% endblock %}

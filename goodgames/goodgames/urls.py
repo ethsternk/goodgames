@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path
 from goodgames import views
 from goodgames.models import Profile, Game, Post
+from goodgames import settings
+from django.conf.urls.static import static
 
 admin.site.register(Profile)
 admin.site.register(Game)
@@ -16,5 +18,6 @@ urlpatterns = [
     path('game/<int:game_id>', views.game_view),
     path('game/<int:game_id>/wishlist_add', views.wishlist_add_view),
     path('game/<int:game_id>/collection_add', views.collection_add_view),
-    path('profile/<int:profile_id>', views.profile_view)
-]
+    path('profile/<int:profile_id>', views.profile_view),
+    path('search/', views.search_view),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
