@@ -23,19 +23,10 @@ class Game(models.Model):
         return str(self.igdb_id)
 
 
-# class Reviews(models.Model):
-#     one_star = 1
-#     two_star = 2
-#     three_star = 3
-#     four_star = 4
-#     five_star = 5
-#     review_choices = (
-#         (one_star, 'One Star'),
-#         (two_star, 'Two Star'),
-#         (three_star, 'Three Star'),
-#         (four_star, 'Four Star'),
-#         (five_star, 'Five Star')
-#     )
-#     reviews = models.CharField(
-#         max_length=2, choices=review_choices, default=None)
-#     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    body = models.TextField()
+    game = models.CharField(max_length=200)
+    igdb_id = models.IntegerField(default=None)
+    date = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)

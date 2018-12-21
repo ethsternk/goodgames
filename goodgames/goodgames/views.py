@@ -1,9 +1,10 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from goodgames.models import Profile, Game
-from goodgames.forms import SignupForm, LoginForm
+from goodgames.models import Profile, Game, Post
+from goodgames.forms import SignupForm, LoginForm, PostForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
+from datetime import datetime
 # from django.contrib.auth.decorators import login_required
 
 
@@ -27,21 +28,29 @@ def game_view(request, game_id):
             'accept': 'application/json',
         }
     ).json()[0]
-    # related = []
-    # for item in game['games']:
-    #     print(item)
-    #     related.append(requests.get(
-    #         "https://api-endpoint.igdb.com/games/" + str(item),
-    #         headers={
-    #             'user-key': '28db14f003075ce68766bfe55e7e9279',
-    #             'accept': 'application/json',
-    #         }
-    #     ).json()[0])
-    return render(request, 'game.html', {'data': {
-        'game': game,
-        # 'related': related,
-        'user': user,
-    }})
+    form = PostForm(None or request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            data = form.cleaned_data
+            new_post = Post.objects.create(
+                title=data['title'], 
+                body=data['body'],
+                game=game['name'],
+                igdb_id=game_id,
+                date=datetime.now(),
+                user=user,
+            )
+            return HttpResponseRedirect(reverse('homepage'))
+    posts = Post.objects.filter(igdb_id=game_id)
+    return render(request, 'game.html', {
+        'data': {
+            'game': game,
+            # 'related': related,
+            'user': user,
+            'posts': posts,
+        },
+        'form': form,
+    })
 
 
 def profile_view(request, profile_id):

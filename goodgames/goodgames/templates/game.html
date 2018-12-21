@@ -31,4 +31,17 @@
             <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
         {% endif %}
     </div>
+    <form action='/game/{{ data.game.id }}' method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type='submit' value='Submit'>
+    </form>
+    <h3>Posts!</h3>
+    <ul>
+        {% for item in data.posts %}
+            <li>
+                <p><bold>{{ item.title }}</bold> – {{ item.body }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
