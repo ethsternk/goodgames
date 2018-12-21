@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
-
 {% block main %}
-<div>
-    
+<body>
+    <div>
+        {% if data.user %}
+            <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
+            <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
+        {% endif %}
+    </div>
     <h2>{{ data.game.name }}</h2>
     <p>{{ data.game. }}</p>
     <p>{{ data.game.summary }}</p>
@@ -28,17 +32,13 @@
             {% endfor %}
         </p>
     </div>
-    <div>
-        {% if data.user %}
-            <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
-            <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
-        {% endif %}
-    </div>
+    {% if data.user %}
     <form action='/game/{{ data.game.id }}' method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type='submit' value='Submit'>
     </form>
+    {% endif %}
     <h3>Posts!</h3>
     <ul>
         {% for item in data.posts %}
