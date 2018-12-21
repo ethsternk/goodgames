@@ -26,7 +26,8 @@ class Game(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=100)
     body = models.TextField()
-    game = models.CharField(max_length=200)
-    igdb_id = models.IntegerField(default=None)
+    game = models.ForeignKey(
+        Game, on_delete=models.CASCADE, related_name='game')
     date = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name='profile')
