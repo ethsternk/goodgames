@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path
 from goodgames import views
-from goodgames.models import Profile, Game
+from goodgames.models import Profile, Game, Post
 from goodgames import settings
 from django.conf.urls.static import static
 
 admin.site.register(Profile)
 admin.site.register(Game)
+admin.site.register(Post)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

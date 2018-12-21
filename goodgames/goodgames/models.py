@@ -21,3 +21,12 @@ class Game(models.Model):
 
     def __str__(self):
         return str(self.igdb_id)
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    body = models.TextField()
+    game = models.CharField(max_length=200)
+    igdb_id = models.IntegerField(default=None)
+    date = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
