@@ -31,3 +31,10 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now=True)
     profile = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name='profile')
+
+
+class Comment(models.Model):
+    body = models.TextField()
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)

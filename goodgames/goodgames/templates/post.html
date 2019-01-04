@@ -6,5 +6,16 @@
         <p><a href="/game/{{ data.game.igdb_id }}/post/{{ data.post.id }}"><b>{{ data.post.title }}</b></a> – <span style="font-size: .75em">submitted at {{ data.post.date }} by <a href="/profile/{{ data.post.profile.id }}">{{ data.post.profile }}</a></span></p>
         <p>{{ data.post.body }}
     </div>
+    {% for item in data.comments %}
+    <p>{{ item.body }} – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ data.post.profile }}</a></span></p>
+    {% endfor %}
+    {% if data.user %}
+    <h3>New Comment</h3>
+    <form action='/game/{{ data.game.igdb_id }}/post/{{ data.post.id }}' method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type='submit' value='Submit'>
+    </form>
+    {% endif %}
 </body>
 {% endblock %}
