@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block main %}
+<body>
+    <p><a href="/game/{{ data.game.igdb_id }}">Back to main game page</a></p>
+    <h2>{{ data.game.name }}</h2>
+    <img src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ data.game.cover }}.jpg" />
+    <h3>Posts</h3>
+    <ul>
+        {% for item in data.posts %}
+            <p><a href="/game/{{ data.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
+        {% endfor %}
+    </ul>
+    {% if data.user %}
+    <h3>New Post</h3>
+    <form action='/game/{{ data.game.igdb_id }}/posts' method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type='submit' value='Submit'>
+    </form>
+    {% endif %}
+</body>
+{% endblock %}

@@ -53,44 +53,10 @@ def game_view(request, game_id):
             'accept': 'application/json',
         }
     ).json()[0]
-    game_instance = Game.objects.filter(igdb_id=game_id).first()
-    posts = Post.objects.filter(game=game_instance)
-    form = PostForm(None or request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            if not game_instance:
-                game_instance = Game.objects.create(
-                    igdb_id=game_id,
-                    name=game['name'],
-                    cover=game['cover']['cloudinary_id'],
-                )
-            data = form.cleaned_data
-            Post.objects.create(
-                title=data['title'],
-                body=data['body'],
-                game=game_instance,
-                date=datetime.now(),
-                profile=request.user.profile,
-            )
-            return HttpResponseRedirect('/game/' + str(game_id))
-    # related = []
-    # for item in game['games']:
-    #     related.append(requests.get(
-    #         "https://api-endpoint.igdb.com/games/" + str(item),
-    #         headers={
-    #             'user-key': '28db14f003075ce68766bfe55e7e9279',
-    #             'accept': 'application/json',
-    #         }
-    #     ).json()[0])
-    return render(request, 'game.html', {
-        'data': {
-            'game': game,
-            # 'related': related,
-            'user': request.user.profile,
-            'posts': posts,
-        },
-        'form': form,
-    })
+    return render(request, 'game.html', {'data': {
+        'game': game,
+        'user': request.user.profile,
+    }})
 
 
 def profile_view(request, profile_id):
@@ -211,3 +177,44 @@ def search_view(request):
         'data': {'results': results},
         'form': form,
     })
+
+
+def game_posts_view(request, game_id):
+    game = Game.objects.filter(igdb_id=game_id).first()
+    posts = Post.objects.filter(game=game)
+    form = PostForm(None or request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            if not game:
+                game = Game.objects.create(
+                    igdb_id=game_id,
+                    name=game['name'],
+                    cover=game['cover']['cloudinary_id'],
+                )
+            data = form.cleaned_data
+            Post.objects.create(
+                title=data['title'],
+                body=data['body'],
+                game=game,
+                date=datetime.now(),
+                profile=request.user.profile,
+            )
+            return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
+    return render(request, 'game_posts.html', {
+        'data': {
+            'game': game,
+            'user': request.user.profile,
+            'posts': posts,
+        },
+        'form': form,
+    })
+
+
+def post_view(request, game_id, post_id):
+    game = Game.objects.filter(igdb_id=game_id).first()
+    post = Post.objects.filter(id=post_id).first()
+    return render(request, 'post.html', {'data': {
+        'game': game,
+        'user': request.user.profile,
+        'post': post,
+    }})
