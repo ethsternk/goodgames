@@ -180,31 +180,41 @@ def search_view(request):
 
 
 def game_posts_view(request, game_id):
-    game_instance = Game.objects.filter(igdb_id=game_id).first()
-    posts = Post.objects.filter(game=game_instance)
+    game = Game.objects.filter(igdb_id=game_id).first()
+    posts = Post.objects.filter(game=game)
     form = PostForm(None or request.POST)
     if request.method == 'POST':
         if form.is_valid():
-            if not game_instance:
-                game_instance = Game.objects.create(
+            if not game:
+                game = Game.objects.create(
                     igdb_id=game_id,
-                    name=game_instance['name'],
-                    cover=game_instance['cover']['cloudinary_id'],
+                    name=game['name'],
+                    cover=game['cover']['cloudinary_id'],
                 )
             data = form.cleaned_data
             Post.objects.create(
                 title=data['title'],
                 body=data['body'],
-                game=game_instance,
+                game=game,
                 date=datetime.now(),
                 profile=request.user.profile,
             )
             return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
     return render(request, 'game_posts.html', {
         'data': {
-            'game': game_instance,
+            'game': game,
             'user': request.user.profile,
             'posts': posts,
         },
         'form': form,
     })
+
+
+def post_view(request, game_id, post_id):
+    game = Game.objects.filter(igdb_id=game_id).first()
+    post = Post.objects.filter(id=post_id).first()
+    return render(request, 'post.html', {'data': {
+        'game': game,
+        'user': request.user.profile,
+        'post': post,
+    }})

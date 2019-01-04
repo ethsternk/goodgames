@@ -19,6 +19,7 @@ urlpatterns = [
     path('game/<int:game_id>/wishlist_add', views.wishlist_add_view),
     path('game/<int:game_id>/collection_add', views.collection_add_view),
     path('game/<int:game_id>/posts', views.game_posts_view),
+    path('game/<int:game_id>/post/<int:post_id>', views.post_view),
     path('profile/<int:profile_id>', views.profile_view),
     path('search/', views.search_view),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

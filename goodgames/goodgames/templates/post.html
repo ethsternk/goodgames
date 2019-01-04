@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block main %}
+<body>
+    <p><a href="/game/{{ data.game.igdb_id }}/posts">Back to all posts for this game</a></p>
+    <div style="outline: 1px solid black">
+        <p><a href="/game/{{ data.game.igdb_id }}/post/{{ data.post.id }}"><b>{{ data.post.title }}</b></a> – <span style="font-size: .75em">submitted at {{ data.post.date }} by <a href="/profile/{{ data.post.profile.id }}">{{ data.post.profile }}</a></span></p>
+        <p>{{ data.post.body }}
+    </div>
+</body>
+{% endblock %}

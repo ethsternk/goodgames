@@ -7,10 +7,7 @@
     <h3>Posts</h3>
     <ul>
         {% for item in data.posts %}
-            <div style="outline: 1px solid black">
-                <p><b>{{ item.title }}</b> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
-                <p>{{ item.body }}</p>
-            </div>
+            <p><a href="/game/{{ data.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
         {% endfor %}
     </ul>
     {% if data.user %}
