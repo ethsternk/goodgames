@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from goodgames.models import Profile, Game, Post
-from goodgames.forms import SignupForm, LoginForm, PostForm, SearchForm
+from goodgames.models import Profile, Game, Post, Comment
+from goodgames.forms import (
+    SignupForm, LoginForm, PostForm, SearchForm, CommentForm)
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
@@ -35,7 +36,6 @@ def home_view(request):
             'accept': 'application/json',
         }
     ).json()
-    print(popular[0])
     return render(request, 'home.html', {
         'data': {
             'user': user,
@@ -213,8 +213,25 @@ def game_posts_view(request, game_id):
 def post_view(request, game_id, post_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     post = Post.objects.filter(id=post_id).first()
-    return render(request, 'post.html', {'data': {
-        'game': game,
-        'user': request.user.profile,
-        'post': post,
-    }})
+    comments = Comment.objects.filter(post=post)
+    form = CommentForm(None or request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            data = form.cleaned_data
+            Comment.objects.create(
+                body=data['body'],
+                post=post,
+                date=datetime.now(),
+                profile=request.user.profile,
+            )
+            return HttpResponseRedirect(
+                '/game/' + str(game_id) + '/post/' + str(post_id))
+    return render(request, 'post.html', {
+        'data': {
+            'game': game,
+            'user': request.user.profile,
+            'post': post,
+            'comments': comments,
+        },
+        'form': form,
+    })

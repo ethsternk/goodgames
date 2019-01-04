@@ -19,3 +19,7 @@ class PostForm(forms.Form):
 
 class SearchForm(forms.Form):
     search = forms.CharField(max_length=50)
+
+
+class CommentForm(forms.Form):
+    body = forms.CharField(widget=forms.Textarea, max_length=5000)
