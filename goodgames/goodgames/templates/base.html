@@ -5,7 +5,9 @@
 
   <body>
     <!-- Navbar -->
-    {% include 'header.html' %}
+    {% if request.get_full_path == "/splash" is False %}
+      {% include 'header.html' %}
+    {% endif %}
     <!-- End Navbar -->
 
     <!-- Main -->
