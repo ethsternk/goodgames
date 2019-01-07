@@ -1,14 +1,7 @@
 {% extends "base.html" %}
 {% block main %}
 <div>
-    {% if data.user %}
-        <p>Hello, <a href="profile/{{ data.user.id }}">{{ data.user.name }}</a>!</p>
-        <p><a href="/logout/">Logout</a></p>
-    {% else %}
-        <p>new phone who dis</p>
-        <p><a href="/login/">Login</a></p>
-        <p><a href="/signup/">Signup</a></p>
-    {% endif %}
+    <h3>Search for games</h3>
     <form action="/search/" method="post">
         {% csrf_token %}
         {{ form.as_p }}
