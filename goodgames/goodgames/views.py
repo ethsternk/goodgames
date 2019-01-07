@@ -113,6 +113,7 @@ def profile_view(request, profile_id):
     profile = Profile.objects.filter(id=profile_id).first()
     profile_wish = profile.wishlist.all()
     profile_coll = profile.collection.all()
+    posts = Post.objects.filter(profile=profile)
     return render(request, 'profile.html', {'data': {
         'profile': profile,
         'wishlist': profile_wish,
@@ -120,6 +121,7 @@ def profile_view(request, profile_id):
         'user': user,
         'give': [game for game in profile_wish if game in user_coll],
         'take': [game for game in profile_coll if game in user_wish],
+        'posts': posts,
     }})
 
 
