@@ -1,11 +1,11 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from goodgames.models import Profile, Game, Post
-from goodgames.forms import SignupForm, LoginForm, PostForm, SearchForm
+from goodgames.models import Profile, Game, Post, Comment
+from goodgames.forms import (
+    SignupForm, LoginForm, PostForm, SearchForm, CommentForm)
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
-# from django.contrib.auth.decorators import login_required
 
 
 def splash_view(request):
@@ -16,9 +16,7 @@ def splash_view(request):
 
 
 def home_view(request):
-    user = None
-    if request.user.username:
-        user = Profile.objects.filter(user=request.user).first()
+    user = request.user.profile if request.user.is_authenticated else None
     form = SearchForm(None or request.POST)
     if form.is_valid():
         data = form.cleaned_data
@@ -55,6 +53,7 @@ def home_view(request):
 
 
 def game_view(request, game_id):
+    user = request.user.profile if request.user.is_authenticated else None
     game = requests.get(
         "https://api-endpoint.igdb.com/games/" + str(game_id),
         headers={
@@ -62,43 +61,11 @@ def game_view(request, game_id):
             'accept': 'application/json',
         }
     ).json()[0]
-    game_instance = Game.objects.filter(igdb_id=game_id).first()
-    posts = Post.objects.filter(game=game_instance)
-    form = PostForm(None or request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            if not game_instance:
-                game_instance = Game.objects.create(
-                    igdb_id=game_id,
-                    name=game['name'],
-                    cover=game['cover']['cloudinary_id'],
-                )
-            data = form.cleaned_data
-            Post.objects.create(
-                title=data['title'],
-                body=data['body'],
-                game=game_instance,
-                date=datetime.now(),
-                profile=request.user.profile,
-            )
-            return HttpResponseRedirect('/game/' + str(game_id))
-    # related = []
-    # for item in game['games']:
-    #     related.append(requests.get(
-    #         "https://api-endpoint.igdb.com/games/" + str(item),
-    #         headers={
-    #             'user-key': '28db14f003075ce68766bfe55e7e9279',
-    #             'accept': 'application/json',
-    #         }
-    #     ).json()[0])
     return render(request, 'game.html', {
         'data': {
             'game': game,
-            # 'related': related,
-            'user': request.user.profile,
-            'posts': posts,
-        },
-        'form': form,
+            'user': user,
+        }
     })
 
 
@@ -220,5 +187,64 @@ def search_view(request):
         ).json()
     return render(request, 'search.html', {
         'data': {'results': results},
+        'form': form,
+    })
+
+
+def posts_view(request, game_id):
+    game = Game.objects.filter(igdb_id=game_id).first()
+    user = request.user.profile if request.user.is_authenticated else None
+    posts = Post.objects.filter(game=game)
+    form = PostForm(None or request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            if not game:
+                game = Game.objects.create(
+                    igdb_id=game_id,
+                    name=game['name'],
+                    cover=game['cover']['cloudinary_id'],
+                )
+            data = form.cleaned_data
+            Post.objects.create(
+                title=data['title'],
+                body=data['body'],
+                game=game,
+                date=datetime.now(),
+                profile=request.user.profile,
+            )
+            return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
+    return render(request, 'game_posts.html', {
+        'data': {
+            'game': game,
+            'user': user,
+            'posts': posts,
+        },
+        'form': form,
+    })
+
+
+def comments_view(request, game_id, post_id):
+    game = Game.objects.filter(igdb_id=game_id).first()
+    post = Post.objects.filter(id=post_id).first()
+    comments = Comment.objects.filter(post=post)
+    form = CommentForm(None or request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            data = form.cleaned_data
+            Comment.objects.create(
+                body=data['body'],
+                post=post,
+                date=datetime.now(),
+                profile=request.user.profile,
+            )
+            return HttpResponseRedirect(
+                '/game/' + str(game_id) + '/post/' + str(post_id))
+    return render(request, 'post.html', {
+        'data': {
+            'game': game,
+            'user': request.user.profile,
+            'post': post,
+            'comments': comments,
+        },
         'form': form,
     })
