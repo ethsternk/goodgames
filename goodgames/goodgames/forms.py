@@ -1,6 +1,6 @@
 from django import forms
-from django.forms import ModelForm
-from goodgames.models import Image
+# from django.forms import ModelForm
+# from goodgames.models import Image
 
 
 class SignupForm(forms.Form):
@@ -27,7 +27,6 @@ class CommentForm(forms.Form):
     body = forms.CharField(widget=forms.Textarea, max_length=5000)
 
 
-class ImageForm(ModelForm):
-    class Meta:
-        model = Image
-
+# class ImageForm(ModelForm):
+#     class Meta:
+#         model = Image
