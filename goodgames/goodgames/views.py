@@ -6,13 +6,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
-# from django.contrib.auth.decorators import login_required
 
 
 def home_view(request):
-    user = None
-    if request.user.username:
-        user = Profile.objects.filter(user=request.user).first()
+    user = request.user.profile if request.user.is_authenticated else None
     form = SearchForm(None or request.POST)
     if form.is_valid():
         data = form.cleaned_data
@@ -46,6 +43,7 @@ def home_view(request):
 
 
 def game_view(request, game_id):
+    user = request.user.profile if request.user.is_authenticated else None
     game = requests.get(
         "https://api-endpoint.igdb.com/games/" + str(game_id),
         headers={
@@ -55,7 +53,7 @@ def game_view(request, game_id):
     ).json()[0]
     return render(request, 'game.html', {'data': {
         'game': game,
-        'user': request.user.profile,
+        'user': user,
     }})
 
 
@@ -179,8 +177,9 @@ def search_view(request):
     })
 
 
-def game_posts_view(request, game_id):
+def posts_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
+    user = request.user.profile if request.user.is_authenticated else None
     posts = Post.objects.filter(game=game)
     form = PostForm(None or request.POST)
     if request.method == 'POST':
@@ -203,14 +202,14 @@ def game_posts_view(request, game_id):
     return render(request, 'game_posts.html', {
         'data': {
             'game': game,
-            'user': request.user.profile,
+            'user': user,
             'posts': posts,
         },
         'form': form,
     })
 
 
-def post_view(request, game_id, post_id):
+def comments_view(request, game_id, post_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     post = Post.objects.filter(id=post_id).first()
     comments = Comment.objects.filter(post=post)

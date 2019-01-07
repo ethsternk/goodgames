@@ -2,7 +2,7 @@
 {% block main %}
 <body>
     <div>
-        {% if data.user %}
+        {% if data.user is not none %}
             <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
             <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
         {% endif %}
