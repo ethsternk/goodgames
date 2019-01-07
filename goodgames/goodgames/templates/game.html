@@ -2,11 +2,10 @@
 {% block main %}
 <body>
     <div>
-        {% if data.user is not none %}
+        {% if data.user %}
             <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
             <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
         {% endif %}
-        <p><a href="{{ data.game.id }}/posts">See posts for this game</a></p>
     </div>
     <h2>{{ data.game.name }}</h2>
     <p>{{ data.game. }}</p>
@@ -22,11 +21,31 @@
     </div>
     <h3>You might also like:</h3>
     <div style="display: inline-block">
+        <!-- {% for item in data.related %}
+            <a href="/game/{{ item.id }}">
+                <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover.cloudinary_id }}.jpg" />
+            </a>
+        {% endfor %} -->
         <p>
             {% for item in data.game.games %}
                 <a href="/game/{{ item }}">{{ item }}</a> | 
             {% endfor %}
         </p>
     </div>
+    {% if data.user %}
+    <form action='/game/{{ data.game.id }}' method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type='submit' value='Submit'>
+    </form>
+    {% endif %}
+    <h3>Posts!</h3>
+    <ul>
+        {% for item in data.posts %}
+            <li>
+                <p><bold>{{ item.title }}</bold> – {{ item.body }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 {% endblock %}

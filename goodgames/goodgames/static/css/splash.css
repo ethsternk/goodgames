@@ -1,0 +1,67 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    overflow: hidden;
+   
+}
+
+main {
+    flex: 1 0 auto;
+    
+}
+
+#loginmain {
+    flex: 1 0 auto;
+    
+}
+
+#css {
+    position: absolute;
+    float: left;
+    width: 640px;
+    min-height: 370px;
+    background-color: #000;
+    z-index: 300000;
+}
+
+.content {
+    position: relative;
+    margin: 0 auto;
+    border: 40px solid;
+}
+
+.content video {
+    
+    border: 40px solid;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1000;
+    overflow: hidden;
+    -webkit-filter: blur(15px);
+    -moz-filter: blur(15px);
+    -o-filter: blur(15px);
+    -ms-filter: blur(15px);
+    filter: blur(15px);
+}
+
+.content:before {
+    content: url("content/logox1.png");
+    position: absolute;
+    /* background: rgba(0, 0, 0, 0.5); */
+    border-radius: 5px;
+    top: 22.5vh;
+    right: 12.5vw;
+    bottom: 12.5vh;
+    left: 12.5vw;
+    /* top: 22.5vh;
+    right: 12.5vw;
+    bottom: 12.5vh;
+    left: 12.5vw; */
+    }
+
