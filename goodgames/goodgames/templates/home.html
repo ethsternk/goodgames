@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block main %}
 <div>
+    <h3>Search for games</h3>
     <form action="/search/" method="post">
         {% csrf_token %}
         {{ form.as_p }}
@@ -46,15 +47,5 @@
             </div>
     {% endfor %}
     </div>
-        {% comment %} <ul>
-            <li>
-                <a href="/game/{{ item.id }}">
-                    <p>{{ item.name }}</p>
-                    {% if item.cover %}
-                        <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover.cloudinary_id }}.jpg" />
-                    {% endif %}
-                </a>
-            </li>
-        </ul> {% endcomment %}
 </body>
 {% endblock %}
