@@ -32,5 +32,9 @@
             <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
         </a>
     {% endfor %}
+    <h3>Posts</h3>
+    {% for item in data.posts %}
+        <p><a href="/game/{{ item.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
+    {% endfor %}
 </div>
 {% endblock %}
