@@ -6,10 +6,11 @@
             <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
             <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
         {% endif %}
-        <p><a href="{{ data.game.id }}/posts">See posts for this game</a></p>
+        <p><a href="{{ data.game.id }}/posts">See posts</a></p>
+        <p><a href="{{ data.game.id }}/reviews">See reviews</a></p>
     </div>
     <h2>{{ data.game.name }}</h2>
-    <p>{{ data.game. }}</p>
+    <p><i>User Score: {{ data.score }}</i></p>
     <p>{{ data.game.summary }}</p>
     <img src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ data.game.cover.cloudinary_id }}.jpg" />
     <h3>Screenshots</h3>

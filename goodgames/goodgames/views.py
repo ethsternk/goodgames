@@ -1,11 +1,12 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from goodgames.models import Profile, Game, Post, Comment
+from goodgames.models import Profile, Game, Post, Comment, Review
 from goodgames.forms import (
-    SignupForm, LoginForm, PostForm, SearchForm, CommentForm)
+    SignupForm, LoginForm, PostForm, SearchForm, CommentForm, ReviewForm)
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
+from django.db.models import Avg
 
 
 def splash_view(request):
@@ -61,10 +62,15 @@ def game_view(request, game_id):
             'accept': 'application/json',
         }
     ).json()[0]
+    game_instance = Game.objects.filter(igdb_id=game_id).first()
+    reviews = Review.objects.filter(game=game_instance)
+    score = reviews.aggregate(Avg('score'))
+    score = "%.1f" % score['score__avg']
     return render(request, 'game.html', {
         'data': {
             'game': game,
             'user': user,
+            'score': score,
         }
     })
 
@@ -245,6 +251,39 @@ def comments_view(request, game_id, post_id):
             'user': request.user.profile,
             'post': post,
             'comments': comments,
+        },
+        'form': form,
+    })
+
+
+def reviews_view(request, game_id):
+    game = Game.objects.filter(igdb_id=game_id).first()
+    user = request.user.profile if request.user.is_authenticated else None
+    reviews = Review.objects.filter(game=game)
+    form = ReviewForm(None or request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            if not game:
+                game = Game.objects.create(
+                    igdb_id=game_id,
+                    name=game['name'],
+                    cover=game['cover']['cloudinary_id'],
+                )
+            data = form.cleaned_data
+            Review.objects.create(
+                title=data['title'],
+                body=data['body'],
+                score=data['score'],
+                game=game,
+                date=datetime.now(),
+                profile=request.user.profile,
+            )
+            return HttpResponseRedirect('/game/' + str(game_id) + '/reviews')
+    return render(request, 'reviews.html', {
+        'data': {
+            'game': game,
+            'user': user,
+            'reviews': reviews,
         },
         'form': form,
     })
