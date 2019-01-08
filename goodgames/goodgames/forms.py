@@ -1,6 +1,4 @@
 from django import forms
-# from django.forms import ModelForm
-# from goodgames.models import Image
 
 
 class SignupForm(forms.Form):
@@ -33,8 +31,3 @@ class ReviewForm(forms.Form):
     title = forms.CharField(max_length=100)
     body = forms.CharField(widget=forms.Textarea, max_length=10000)
     score = forms.IntegerField(min_value=0, max_value=10)
-
-
-# class ImageForm(ModelForm):
-#     class Meta:
-#         model = Image
