@@ -47,3 +47,12 @@ class Comment(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     # image = models.ForeignKey(
     #     Image, null=True, blank=True, on_delete=models.CASCADE)
+
+
+class Review(models.Model):
+    title = models.CharField(max_length=250)
+    body = models.TextField()
+    score = models.IntegerField(default=None)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
