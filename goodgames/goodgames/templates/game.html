@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block main %}
 <body>
-    <div>
+    <div style="margin: 1em">
         {% if data.user is not none %}
-            <p><a href="{{ data.game.id }}/collection_add">Add to collection</a></p>
-            <p><a href="{{ data.game.id }}/wishlist_add">Add to wishlist</a></p>
+            <a href="{{ data.game.id }}/collection_add" class="waves-effect waves-light btn">Add to collection</a>
+            <a href="{{ data.game.id }}/wishlist_add" class="waves-effect waves-light btn">Add to wishlist</a>
         {% endif %}
-        <p><a href="{{ data.game.id }}/posts">See posts</a></p>
-        <p><a href="{{ data.game.id }}/reviews">See reviews</a></p>
+        <a href="{{ data.game.id }}/posts" class="waves-effect waves-light btn red">See posts</a>
+        <a href="{{ data.game.id }}/reviews" class="waves-effect waves-light btn red">See reviews</a>
     </div>
     <h2>{{ data.game.name }}</h2>
     <p><i>User Score: {{ data.score }}</i></p>

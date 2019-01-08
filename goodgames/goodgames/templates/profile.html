@@ -3,21 +3,23 @@
 <div>
     <h2>{{ data.profile.name }}'s profile</h2>
     <p>{{ data.profile.user.email }}</p>
-    {% if data.user != data.profile %}
-        <h3>They could borrow to you</h3>
-        {% for item in data.take %}
-            <a href="/game/{{ item }}">
-                <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
-            </a>
-        {% endfor %}
-        <h3>You could borrow to them</h3>
-        {% for item in data.give %}
-            <a href="/game/{{ item }}">
-                <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
-            </a>
-        {% endfor %}
-    {% else %}
-        <p>This is you!</p>
+    {% if data.user is not none %}
+        {% if data.user != data.profile %}
+            <h3>They could borrow to you</h3>
+            {% for item in data.take %}
+                <a href="/game/{{ item }}">
+                    <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
+                </a>
+            {% endfor %}
+            <h3>You could borrow to them</h3>
+            {% for item in data.give %}
+                <a href="/game/{{ item }}">
+                    <img src="//images.igdb.com/igdb/image/upload/t_cover_small/{{ item.cover }}.jpg" />
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>This is you!</p>
+        {% endif %}
     {% endif %}
     <h3>Collection</h3>
     {% for item in data.collection %}
@@ -33,7 +35,19 @@
     {% endfor %}
     <h3>Posts</h3>
     {% for item in data.posts %}
-        <p><a href="/game/{{ item.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
+        <p>
+            <a href="/game/{{ item.game.igdb_id }}"><img style="width: 50px; height: 50px" src="//images.igdb.com/igdb/image/upload/t_thumb/{{ item.game.cover }}.jpg" /></a>
+            <a href="/game/{{ item.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span>
+        </p>
+    {% endfor %}
+    <h3>Reviews</h3>
+    {% for item in data.reviews %}
+        <p>
+            <a href="/game/{{ item.game.igdb_id }}"><img style="width: 50px; height: 50px" src="//images.igdb.com/igdb/image/upload/t_thumb/{{ item.game.cover }}.jpg" /></a>
+            <b>{{ item.title }}</b> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span>
+        </p>
+        <p style="margin-left:40px">{{ item.body }}</p>
+        <p style="margin-left:40px"><i>Score: {{ item.score }}</i></p>
     {% endfor %}
 </div>
 {% endblock %}
