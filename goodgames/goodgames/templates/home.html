@@ -1,51 +1,54 @@
 {% extends "base.html" %}
 {% block main %}
 <div>
-    <h3>Search for games</h3>
     <form action="/search/" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" name="next" value="{{ request.GET.next }}">
-        <input type="submit" value="Go">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Search
+            <i class="material-icons right">search</i>
+        </button>
     </form>
     <h3>Popular right now</h3>
     <div class="row">
         {% for item in data.top1 %}
-        <div class="col s2">
+            <div class="col s2">
                 <div class="card">
                     <div class="card-image waves-effect waves-block waves-light">
-                        <img class="" src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ item.cover.cloudinary_id }}.jpg">
+                        <a href="/game/{{ item.id }}">
+                            <img class="" src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ item.cover.cloudinary_id }}.jpg">
+                        </a>
                     </div>
                     <div class="card-content">
                         <span class="card-title activator white-text text-darken-4">{{ item.name }}<i class="material-icons right">more_vert</i></span>
-
                     </div>
                     <div class="card-reveal">
                         <span class="card-title white-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                        <p>{{ item.summary }}</p>
                     </div>
                 </div>
             </div>
-    {% endfor %}
+        {% endfor %}
     </div>
     <div class="row">
         {% for item in data.top2 %}
-        <div class="col s2">
+            <div class="col s2">
                 <div class="card">
                     <div class="card-image waves-effect waves-block waves-light">
-                        <img class="" src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ item.cover.cloudinary_id }}.jpg">
+                        <a href="/game/{{ item.id }}">
+                            <img class="" src="//images.igdb.com/igdb/image/upload/t_cover_big/{{ item.cover.cloudinary_id }}.jpg">
+                        </a>
                     </div>
-                    <div class="card-content" style="">
+                    <div class="card-content">
                         <span class="card-title activator white-text text-darken-4">{{ item.name }}<i class="material-icons right">more_vert</i></span>
-
                     </div>
                     <div class="card-reveal">
                         <span class="card-title white-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                        <p>{{ item.summary }}</p>
                     </div>
                 </div>
             </div>
-    {% endfor %}
+        {% endfor %}
     </div>
 </body>
 {% endblock %}

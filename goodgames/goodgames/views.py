@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
-from django.db.models import Avg
+from django.db.models import Avg, QuerySet
 
 
 def splash_view(request):
@@ -19,23 +19,24 @@ def splash_view(request):
 def home_view(request):
     user = request.user.profile if request.user.is_authenticated else None
     form = SearchForm(None or request.POST)
-    if form.is_valid():
-        data = form.cleaned_data
-        results = requests.get(
-            'https://api-endpoint.igdb.com/games/?search=' +
-            data['search'] + '&fields=id,name,cover',
-            headers={
-                'user-key': '28db14f003075ce68766bfe55e7e9279',
-                'accept': 'application/json',
-            }
-        ).json()
-        return render(request, 'search.html', {
-            'data': {'results': results},
-            'form': form,
-        })
+    if request.method == 'POST':
+        if form.is_valid():
+            data = form.cleaned_data
+            results = requests.get(
+                'https://api-endpoint.igdb.com/games/?search=' +
+                data['search'] + '&fields=id,name,cover',
+                headers={
+                    'user-key': '28db14f003075ce68766bfe55e7e9279',
+                    'accept': 'application/json',
+                }
+            ).json()
+            return render(request, 'search.html', {
+                'data': {'results': results},
+                'form': form,
+            })
     popular = requests.get(
         'https://api-endpoint.igdb.com/games/'
-        '?fields=id,name,cover,popularity&order=popularity:desc',
+        '?fields=id,name,cover,summary,popularity&order=popularity:desc',
         headers={
             'user-key': '28db14f003075ce68766bfe55e7e9279',
             'accept': 'application/json',
@@ -64,8 +65,8 @@ def game_view(request, game_id):
     ).json()[0]
     game_instance = Game.objects.filter(igdb_id=game_id).first()
     reviews = Review.objects.filter(game=game_instance)
-    score = reviews.aggregate(Avg('score'))
-    score = "%.1f" % score['score__avg']
+    score = "%.1f" % reviews.aggregate(
+        Avg('score'))['score__avg'] if reviews else None
     return render(request, 'game.html', {
         'data': {
             'game': game,
@@ -76,25 +77,21 @@ def game_view(request, game_id):
 
 
 def profile_view(request, profile_id):
-    user = None
-    user_wish = None
-    user_coll = None
-    if request.user.username:
-        user = Profile.objects.filter(user=request.user).first()
-        user_wish = user.wishlist.all()
-        user_coll = user.collection.all()
+    user = request.user.profile if request.user.is_authenticated else None
     profile = Profile.objects.filter(id=profile_id).first()
-    profile_wish = profile.wishlist.all()
-    profile_coll = profile.collection.all()
     posts = Post.objects.filter(profile=profile)
+    reviews = Review.objects.filter(profile=profile)
     return render(request, 'profile.html', {'data': {
         'profile': profile,
-        'wishlist': profile_wish,
-        'collection': profile_coll,
+        'wishlist': profile.wishlist.all(),
+        'collection': profile.collection.all(),
         'user': user,
-        'give': [game for game in profile_wish if game in user_coll],
-        'take': [game for game in profile_coll if game in user_wish],
+        'give': ([game for game in profile.wishlist.all()
+                  if game in user.collection.all()] if user else None),
+        'take': ([game for game in profile.collection.all()
+                  if game in user.wishlist.all()] if user else None),
         'posts': posts,
+        'reviews': reviews,
     }})
 
 
@@ -181,16 +178,17 @@ def collection_add_view(request, game_id):
 def search_view(request):
     form = SearchForm(None or request.POST)
     results = None
-    if form.is_valid():
-        data = form.cleaned_data
-        results = requests.get(
-            'https://api-endpoint.igdb.com/games/?search=' +
-            data['search'] + '&fields=id,name,cover',
-            headers={
-                'user-key': '28db14f003075ce68766bfe55e7e9279',
-                'accept': 'application/json',
-            }
-        ).json()
+    if request.method == 'POST':
+        if form.is_valid():
+            data = form.cleaned_data
+            results = requests.get(
+                'https://api-endpoint.igdb.com/games/?search=' +
+                data['search'] + '&fields=id,name,cover',
+                headers={
+                    'user-key': '28db14f003075ce68766bfe55e7e9279',
+                    'accept': 'application/json',
+                }
+            ).json()
     return render(request, 'search.html', {
         'data': {'results': results},
         'form': form,
@@ -219,7 +217,7 @@ def posts_view(request, game_id):
                 profile=request.user.profile,
             )
             return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
-    return render(request, 'game_posts.html', {
+    return render(request, 'posts.html', {
         'data': {
             'game': game,
             'user': user,
@@ -230,6 +228,7 @@ def posts_view(request, game_id):
 
 
 def comments_view(request, game_id, post_id):
+    user = request.user.profile if request.user.is_authenticated else None
     game = Game.objects.filter(igdb_id=game_id).first()
     post = Post.objects.filter(id=post_id).first()
     comments = Comment.objects.filter(post=post)
@@ -241,14 +240,14 @@ def comments_view(request, game_id, post_id):
                 body=data['body'],
                 post=post,
                 date=datetime.now(),
-                profile=request.user.profile,
+                profile=user,
             )
             return HttpResponseRedirect(
                 '/game/' + str(game_id) + '/post/' + str(post_id))
-    return render(request, 'post.html', {
+    return render(request, 'comments.html', {
         'data': {
             'game': game,
-            'user': request.user.profile,
+            'user': user,
             'post': post,
             'comments': comments,
         },

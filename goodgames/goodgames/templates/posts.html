@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block main %}
 <body>
-    <p><a href="/game/{{ data.game.igdb_id }}">Back to main game page</a></p>
+    <div style="margin: 1em"><a href="/game/{{ data.game.igdb_id }}" class="waves-effect waves-light btn red">Back to game</a></div>
     <h2>{{ data.game.name }}</h2>
     <h3>Posts</h3>
     <ul>
@@ -14,7 +14,9 @@
     <form action='/game/{{ data.game.igdb_id }}/posts' method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type='submit' value='Submit'>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+        </button>
     </form>
     {% endif %}
 </body>

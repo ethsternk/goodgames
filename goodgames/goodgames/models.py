@@ -36,8 +36,6 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now=True)
     profile = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name='profile')
-    # image = models.ForeignKey(
-    #     Image, blank=True, null=True, on_delete=models.CASCADE)
 
 
 class Comment(models.Model):
@@ -45,8 +43,6 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    # image = models.ForeignKey(
-    #     Image, null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Review(models.Model):
