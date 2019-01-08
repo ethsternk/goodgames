@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from cloudinary.models import CloudinaryField
+# from cloudinary.models import CloudinaryField
 
 
 class Profile(models.Model):
@@ -24,10 +24,6 @@ class Game(models.Model):
         return str(self.igdb_id)
 
 
-class Image(models.Model):
-    image = CloudinaryField('image')
-
-
 class Post(models.Model):
     title = models.CharField(max_length=100)
     body = models.TextField()
@@ -36,8 +32,7 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now=True)
     profile = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name='profile')
-    # image = models.ForeignKey(
-    #     Image, blank=True, null=True, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True)
 
 
 class Comment(models.Model):
@@ -45,8 +40,7 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now=True)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    # image = models.ForeignKey(
-    #     Image, null=True, blank=True, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True)
 
 
 class Review(models.Model):

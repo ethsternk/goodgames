@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'goodgames',
-    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +124,7 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/image/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
