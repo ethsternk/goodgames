@@ -199,11 +199,17 @@ def posts_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
     posts = Post.objects.filter(game=game)
-    
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             if not game:
+                game = requests.get(
+                    "https://api-endpoint.igdb.com/games/" + str(game_id),
+                    headers={
+                        'user-key': '28db14f003075ce68766bfe55e7e9279',
+                        'accept': 'application/json',
+                    }
+                ).json()[0]
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
@@ -219,13 +225,14 @@ def posts_view(request, game_id):
                 image=data['image']
             )
             return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
-    else: 
+    else:
         form = PostForm(None)
     return render(request, 'posts.html', {
         'data': {
             'game': game,
             'user': user,
             'posts': posts,
+            'game_id': game_id,
         },
         'form': form,
     })
@@ -267,9 +274,17 @@ def reviews_view(request, game_id):
     user = request.user.profile if request.user.is_authenticated else None
     reviews = Review.objects.filter(game=game)
     form = ReviewForm(None or request.POST)
+    review = Review.objects.filter(game=game, profile=user)
     if request.method == 'POST':
         if form.is_valid():
             if not game:
+                game = requests.get(
+                    "https://api-endpoint.igdb.com/games/" + str(game_id),
+                    headers={
+                        'user-key': '28db14f003075ce68766bfe55e7e9279',
+                        'accept': 'application/json',
+                    }
+                ).json()[0]
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
@@ -290,6 +305,8 @@ def reviews_view(request, game_id):
             'game': game,
             'user': user,
             'reviews': reviews,
+            'game_id': game_id,
+            'review': review,
         },
         'form': form,
     })
