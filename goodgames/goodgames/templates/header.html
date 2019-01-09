@@ -3,7 +3,7 @@
         <a href="/" style="margin-left: 1em" class="brand-logo m6">GoodGames</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
         {% if request.user.is_authenticated %}
-        <li><a href="/profile/{{ request.user.id }}">Hello, {{ request.user }}!</a></li>
+        <li><a href="/profile/{{ request.user.profile.id }}">Hello, {{ request.user }}!</a></li>
         <li><a href="/logout">Logout</a></li>
         {% else %}
             <li><a href="/login">Sign in</a></li>

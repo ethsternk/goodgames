@@ -12,12 +12,16 @@
         {% endfor %}
     </ul>
     {% if data.user is not none %}
-    <h3>New Review</h3>
-    <form action='/game/{{ data.game_id }}/reviews' method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type='submit' value='Submit'>
-    </form>
+        {% if data.review %}
+            <p>You have posted a review for this game!</p>
+        {% else %}
+            <h3>New Review</h3>
+            <form action='/game/{{ data.game_id }}/reviews' method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type='submit' value='Submit'>
+            </form>
+        {% endif %}
     {% endif %}
 </body>
 {% endblock %}
