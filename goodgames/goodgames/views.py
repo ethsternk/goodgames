@@ -198,7 +198,7 @@ def search_view(request):
 def posts_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
-    posts = Post.objects.filter(game=game)
+    posts = Post.objects.filter(game=game).order_by('-date')
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -272,7 +272,7 @@ def comments_view(request, game_id, post_id):
 def reviews_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
-    reviews = Review.objects.filter(game=game)
+    reviews = Review.objects.filter(game=game).order_by('-date')
     form = ReviewForm(None or request.POST)
     review = Review.objects.filter(game=game, profile=user)
     if request.method == 'POST':
@@ -310,3 +310,8 @@ def reviews_view(request, game_id):
         },
         'form': form,
     })
+
+
+def all_posts_view(request):
+    posts = Post.objects.all().order_by('-date')
+    return render(request, 'all_posts.html', {'data': {'posts': posts}})
