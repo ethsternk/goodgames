@@ -199,7 +199,6 @@ def posts_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
     posts = Post.objects.filter(game=game)
-    
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -226,6 +225,7 @@ def posts_view(request, game_id):
             'game': game,
             'user': user,
             'posts': posts,
+            'game_id': game_id,
         },
         'form': form,
     })
@@ -290,6 +290,7 @@ def reviews_view(request, game_id):
             'game': game,
             'user': user,
             'reviews': reviews,
+            'game_id': game_id,
         },
         'form': form,
     })
