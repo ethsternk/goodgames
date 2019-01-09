@@ -8,10 +8,13 @@
     </div>
     {% for item in data.comments %}
         <p>{{ item.body }} – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
+        {% if item.image %}
+            <img class='card small' src='/image/{{ item.image }}'>
+        {% endif %}
     {% endfor %}
     {% if data.user %}
     <h3>New Comment</h3>
-    <form action='/game/{{ data.game.igdb_id }}/post/{{ data.post.id }}' method="post">
+    <form action='/game/{{ data.game.igdb_id }}/post/{{ data.post.id }}' method="post" enctype='multipart/form-data'>
         {% csrf_token %}
         {{ form.as_p }}
         <button class="btn waves-effect waves-light" type="submit" name="action">Submit

@@ -7,11 +7,14 @@
     <ul>
         {% for item in data.posts %}
             <p><a href="/game/{{ data.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>
+            {% if item.image %}
+                <img class='card small' src='/image/{{ item.image }}'>
+            {% endif %}
         {% endfor %}
     </ul>
     {% if data.user is not none %}
     <h3>New Post</h3>
-    <form action='/game/{{ data.game.igdb_id }}/posts' method="post">
+    <form action='/game/{{ data.game.igdb_id }}/posts' method="post" enctype='multipart/form-data'>
         {% csrf_token %}
         {{ form.as_p }}
         <button class="btn waves-effect waves-light" type="submit" name="action">Submit

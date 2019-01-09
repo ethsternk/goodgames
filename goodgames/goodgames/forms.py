@@ -15,7 +15,7 @@ class LoginForm(forms.Form):
 class PostForm(forms.Form):
     title = forms.CharField(max_length=100)
     body = forms.CharField(widget=forms.Textarea, max_length=10000)
-    image = forms.FileField(label='Select A File')
+    image = forms.FileField(label='Select A File', required=False)
 
 
 class SearchForm(forms.Form):
@@ -24,7 +24,7 @@ class SearchForm(forms.Form):
 
 class CommentForm(forms.Form):
     body = forms.CharField(widget=forms.Textarea, max_length=5000)
-    image = forms.FileField(label='Select A File')
+    image = forms.FileField(label='Select A File', required=False)
 
 
 class ReviewForm(forms.Form):
