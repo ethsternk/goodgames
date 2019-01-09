@@ -199,8 +199,9 @@ def posts_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
     posts = Post.objects.filter(game=game)
-    form = PostForm(None or request.POST)
+    
     if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             if not game:
                 game = Game.objects.create(
@@ -215,8 +216,11 @@ def posts_view(request, game_id):
                 game=game,
                 date=datetime.now(),
                 profile=request.user.profile,
+                image=data['image']
             )
             return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
+    else: 
+        form = PostForm(None)
     return render(request, 'posts.html', {
         'data': {
             'game': game,
@@ -232,8 +236,8 @@ def comments_view(request, game_id, post_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     post = Post.objects.filter(id=post_id).first()
     comments = Comment.objects.filter(post=post)
-    form = CommentForm(None or request.POST)
     if request.method == 'POST':
+        form = CommentForm(request.POST, request.FILES)
         if form.is_valid():
             data = form.cleaned_data
             Comment.objects.create(
@@ -241,9 +245,12 @@ def comments_view(request, game_id, post_id):
                 post=post,
                 date=datetime.now(),
                 profile=user,
+                image=data['image']
             )
             return HttpResponseRedirect(
                 '/game/' + str(game_id) + '/post/' + str(post_id))
+    else:
+        form = CommentForm(None)
     return render(request, 'comments.html', {
         'data': {
             'game': game,
