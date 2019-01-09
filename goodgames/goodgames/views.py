@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
-from django.db.models import Avg, QuerySet
+from django.db.models import Avg
 
 
 def splash_view(request):
