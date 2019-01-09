@@ -4,6 +4,7 @@
         <ul id="nav-mobile" class="right hide-on-med-and-down">
         {% if request.user.is_authenticated %}
         <li><a href="/profile/{{ request.user.profile.id }}">Hello, {{ request.user }}!</a></li>
+        <li><a href="/all-posts">All Posts</a></li>
         <li><a href="/logout">Logout</a></li>
         {% else %}
             <li><a href="/login">Sign in</a></li>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block main %}
+<body>
+    <ul>
+        {% for item in data.posts %}
+            <p>
+                <a href="/game/{{ item.game.igdb_id }}"><img style="width: 50px; height: 50px" src="//images.igdb.com/igdb/image/upload/t_thumb/{{ item.game.cover }}.jpg" /></a>
+                <a href="/game/{{ item.game.igdb_id }}/post/{{ item.id }}"><b>{{ item.title }}</b></a> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span>
+            </p>
+            {% if item.image %}
+                <img class='card small' src='/image/{{ item.image }}'>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+{% endblock %}
