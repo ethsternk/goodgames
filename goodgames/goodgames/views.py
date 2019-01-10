@@ -7,6 +7,7 @@ from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
 from django.db.models import Avg, QuerySet
+from goodgames.settings import USER_KEY
 
 
 def splash_view(request):
@@ -26,7 +27,7 @@ def home_view(request):
                 'https://api-endpoint.igdb.com/games/?search=' +
                 data['search'] + '&fields=id,name,cover',
                 headers={
-                    'user-key': '28db14f003075ce68766bfe55e7e9279',
+                    'user-key': USER_KEY,
                     'accept': 'application/json',
                 }
             ).json()
@@ -38,7 +39,7 @@ def home_view(request):
         'https://api-endpoint.igdb.com/games/'
         '?fields=id,name,cover,summary,popularity&order=popularity:desc',
         headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'user-key': USER_KEY,
             'accept': 'application/json',
         }
     ).json()
@@ -59,7 +60,7 @@ def game_view(request, game_id):
     game = requests.get(
         "https://api-endpoint.igdb.com/games/" + str(game_id),
         headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'user-key': USER_KEY,
             'accept': 'application/json',
         }
     ).json()[0]
@@ -141,7 +142,7 @@ def wishlist_add_view(request, game_id):
         game = requests.get(
             "https://api-endpoint.igdb.com/games/" + str(game_id),
             headers={
-                'user-key': '28db14f003075ce68766bfe55e7e9279',
+                'user-key': USER_KEY,
                 'accept': 'application/json',
             }
         ).json()[0]
@@ -162,7 +163,7 @@ def collection_add_view(request, game_id):
         game = requests.get(
             "https://api-endpoint.igdb.com/games/" + str(game_id),
             headers={
-                'user-key': '28db14f003075ce68766bfe55e7e9279',
+                'user-key': USER_KEY,
                 'accept': 'application/json',
             }
         ).json()[0]
@@ -185,7 +186,7 @@ def search_view(request):
                 'https://api-endpoint.igdb.com/games/?search=' +
                 data['search'] + '&fields=id,name,cover',
                 headers={
-                    'user-key': '28db14f003075ce68766bfe55e7e9279',
+                    'user-key': USER_KEY,
                     'accept': 'application/json',
                 }
             ).json()
