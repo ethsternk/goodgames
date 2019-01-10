@@ -19,6 +19,8 @@ urlpatterns = [
     path('game/<int:game_id>', views.game_view),
     path('game/<int:game_id>/wishlist_add', views.wishlist_add_view),
     path('game/<int:game_id>/collection_add', views.collection_add_view),
+    path('game/<int:game_id>/wishlist_remove', views.wishlist_remove_view),
+    path('game/<int:game_id>/collection_remove', views.collection_remove_view),
     path('game/<int:game_id>/posts', views.posts_view),
     path('game/<int:game_id>/post/<int:post_id>', views.comments_view),
     path('game/<int:game_id>/reviews', views.reviews_view),

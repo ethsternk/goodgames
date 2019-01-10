@@ -3,8 +3,16 @@
 <body>
     <div style="margin: 1em">
         {% if data.user is not none %}
-            <a href="{{ data.game.id }}/collection_add" class="waves-effect waves-light btn">Add to collection</a>
-            <a href="{{ data.game.id }}/wishlist_add" class="waves-effect waves-light btn">Add to wishlist</a>
+            {% if data.in_coll %}
+                <a href="{{ data.game.id }}/collection_remove" class="waves-effect waves-light btn">Remove from collection</a>
+            {% else %}
+                <a href="{{ data.game.id }}/collection_add" class="waves-effect waves-light btn">Add to collection</a>
+            {% endif %}
+            {% if data.in_wish %}
+                <a href="{{ data.game.id }}/wishlist_remove" class="waves-effect waves-light btn">Remove from wishlist</a>
+            {% else %}
+                <a href="{{ data.game.id }}/wishlist_add" class="waves-effect waves-light btn">Add to wishlist</a>
+            {% endif %}
         {% endif %}
         <a href="{{ data.game.id }}/posts" class="waves-effect waves-light btn red">See posts</a>
         <a href="{{ data.game.id }}/reviews" class="waves-effect waves-light btn red">See reviews</a>
