@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block main %}
+<body>
+    <ul>
+        {% for item in data.reviews %}
+            <p>
+                <a href="/game/{{ item.game.igdb_id }}"><img style="width: 50px; height: 50px" src="//images.igdb.com/igdb/image/upload/t_thumb/{{ item.game.cover }}.jpg" /></a>
+                <b>{{ item.title }}</b> – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span>
+            </p>
+            <p style="margin-left:40px">{{ item.body }}</p>
+            <p style="margin-left:40px"><i>Score: {{ item.score }}</i></p>
+        {% endfor %}
+    </ul>
+</body>
+{% endblock %}

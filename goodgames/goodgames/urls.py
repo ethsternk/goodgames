@@ -29,6 +29,7 @@ urlpatterns = [
     path('profile/<int:profile_id>', views.profile_view),
     path('search/', views.search_view),
     path('all-posts/', views.all_posts_view),
+    path('all-reviews/', views.all_reviews_view),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
