@@ -1,5 +1,4 @@
 from django import forms
-from django.db import models
 from django.forms import ModelForm
 from goodgames.models import Review
 
@@ -34,4 +33,3 @@ class ReviewForm(ModelForm):
     class Meta:
         model = Review
         fields = ['title', 'body', 'score']
-

@@ -331,3 +331,8 @@ def reviews_view(request, game_id):
 def all_posts_view(request):
     posts = Post.objects.all().order_by('-date')
     return render(request, 'all_posts.html', {'data': {'posts': posts}})
+
+
+def all_reviews_view(request):
+    reviews = Review.objects.all().order_by('-date')
+    return render(request, 'all_reviews.html', {'data': {'reviews': reviews}})
