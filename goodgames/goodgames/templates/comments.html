@@ -5,6 +5,9 @@
     <div style="outline: 1px solid black">
         <p><a href="/game/{{ data.game.igdb_id }}/post/{{ data.post.id }}"><b>{{ data.post.title }}</b></a> – <span style="font-size: .75em">submitted at {{ data.post.date }} by <a href="/profile/{{ data.post.profile.id }}">{{ data.post.profile }}</a></span></p>
         <p>{{ data.post.body }}
+        {% if data.post.image %}
+            <img class='card small' src='/image/{{ data.post.image }}'>
+        {% endif %}
     </div>
     {% for item in data.comments %}
         <p>{{ item.body }} – <span style="font-size: .75em">submitted at {{ item.date }} by <a href="/profile/{{ item.profile.id }}">{{ item.profile }}</a></span></p>

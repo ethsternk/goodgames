@@ -72,6 +72,8 @@ def game_view(request, game_id):
             'game': game,
             'user': user,
             'score': score,
+            'in_coll': game_instance in user.collection.all(),
+            'in_wish': game_instance in user.wishlist.all()
         }
     })
 
@@ -172,6 +174,20 @@ def collection_add_view(request, game_id):
             cover=game['cover']['cloudinary_id'],
         )
         user.collection.add(new_game)
+    return HttpResponseRedirect('/profile/' + str(user.id))
+
+
+def wishlist_remove_view(request, game_id):
+    user = request.user.profile
+    user.wishlist.remove(
+        Game.objects.filter(igdb_id=game_id).first())
+    return HttpResponseRedirect('/profile/' + str(user.id))
+
+
+def collection_remove_view(request, game_id):
+    user = request.user.profile
+    user.collection.remove(
+        Game.objects.filter(igdb_id=game_id).first())
     return HttpResponseRedirect('/profile/' + str(user.id))
 
 
