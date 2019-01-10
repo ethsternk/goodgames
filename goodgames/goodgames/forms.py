@@ -1,4 +1,7 @@
 from django import forms
+from django.db import models
+from django.forms import ModelForm
+from goodgames.models import Review
 
 
 class SignupForm(forms.Form):
@@ -27,7 +30,8 @@ class CommentForm(forms.Form):
     image = forms.FileField(label='Select A File', required=False)
 
 
-class ReviewForm(forms.Form):
-    title = forms.CharField(max_length=100)
-    body = forms.CharField(widget=forms.Textarea, max_length=10000)
-    score = forms.IntegerField(min_value=0, max_value=10)
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Review
+        fields = ['title', 'body', 'score']
+
