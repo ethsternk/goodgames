@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from goodgames import views
-from goodgames.models import Profile, Game, Post
+from goodgames.models import Profile, Game, Post, Comment, Review
 from goodgames import settings
 from django.conf import settings
 from django.conf.urls.static import static
@@ -10,6 +10,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.site.register(Profile)
 admin.site.register(Game)
 admin.site.register(Post)
+admin.site.register(Comment)
+admin.site.register(Review)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
