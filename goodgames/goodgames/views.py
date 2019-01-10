@@ -19,6 +19,17 @@ def get_game(game_id):
     ).json()[0]
 
 
+def search_games(search_terms):
+    return requests.get(
+        'https://api-endpoint.igdb.com/games/?search=' +
+        search_terms + '&fields=id,name,cover',
+        headers={
+            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'accept': 'application/json',
+        }
+    ).json()
+
+
 def splash_view(request):
     if request.user.username:
         return HttpResponseRedirect(reverse('homepage'))
@@ -32,14 +43,7 @@ def home_view(request):
     if request.method == 'POST':
         if form.is_valid():
             data = form.cleaned_data
-            results = requests.get(
-                'https://api-endpoint.igdb.com/games/?search=' +
-                data['search'] + '&fields=id,name,cover',
-                headers={
-                    'user-key': '28db14f003075ce68766bfe55e7e9279',
-                    'accept': 'application/json',
-                }
-            ).json()
+            results = search_games(data['search'])
             return render(request, 'search.html', {
                 'data': {'results': results},
                 'form': form,
@@ -189,14 +193,7 @@ def search_view(request):
     if request.method == 'POST':
         if form.is_valid():
             data = form.cleaned_data
-            results = requests.get(
-                'https://api-endpoint.igdb.com/games/?search=' +
-                data['search'] + '&fields=id,name,cover',
-                headers={
-                    'user-key': '28db14f003075ce68766bfe55e7e9279',
-                    'accept': 'application/json',
-                }
-            ).json()
+            results = search_games(data['search'])
     return render(request, 'search.html', {
         'data': {'results': results},
         'form': form,
