@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block main %}
 <body>
-    <div style="margin: 1em"><a href="/game/{{ data.game.igdb_id }}" class="waves-effect waves-light btn red">Back to game</a></div>
+    <div style="margin: 1em"><a href="/game/{{ data.game_id }}" class="waves-effect waves-light btn red">Back to game</a></div>
     <h2>{{ data.game.name }}</h2>
     <h3>Reviews</h3>
     <ul>
@@ -12,12 +12,16 @@
         {% endfor %}
     </ul>
     {% if data.user is not none %}
-    <h3>New Review</h3>
-    <form action='/game/{{ data.game.igdb_id }}/reviews' method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type='submit' value='Submit'>
-    </form>
+        {% if data.review %}
+            <p>You have posted a review for this game!</p>
+        {% else %}
+            <h3>New Review</h3>
+            <form action='/game/{{ data.game_id }}/reviews' method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type='submit' value='Submit'>
+            </form>
+        {% endif %}
     {% endif %}
 </body>
 {% endblock %}

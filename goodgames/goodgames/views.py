@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
-from django.db.models import Avg, QuerySet
+from django.db.models import Avg
 
 
 def splash_view(request):
@@ -72,6 +72,8 @@ def game_view(request, game_id):
             'game': game,
             'user': user,
             'score': score,
+            'in_coll': game_instance in user.collection.all(),
+            'in_wish': game_instance in user.wishlist.all()
         }
     })
 
@@ -175,6 +177,20 @@ def collection_add_view(request, game_id):
     return HttpResponseRedirect('/profile/' + str(user.id))
 
 
+def wishlist_remove_view(request, game_id):
+    user = request.user.profile
+    user.wishlist.remove(
+        Game.objects.filter(igdb_id=game_id).first())
+    return HttpResponseRedirect('/profile/' + str(user.id))
+
+
+def collection_remove_view(request, game_id):
+    user = request.user.profile
+    user.collection.remove(
+        Game.objects.filter(igdb_id=game_id).first())
+    return HttpResponseRedirect('/profile/' + str(user.id))
+
+
 def search_view(request):
     form = SearchForm(None or request.POST)
     results = None
@@ -198,12 +214,18 @@ def search_view(request):
 def posts_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
-    posts = Post.objects.filter(game=game)
-    
+    posts = Post.objects.filter(game=game).order_by('-date')
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             if not game:
+                game = requests.get(
+                    "https://api-endpoint.igdb.com/games/" + str(game_id),
+                    headers={
+                        'user-key': '28db14f003075ce68766bfe55e7e9279',
+                        'accept': 'application/json',
+                    }
+                ).json()[0]
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
@@ -219,13 +241,14 @@ def posts_view(request, game_id):
                 image=data['image']
             )
             return HttpResponseRedirect('/game/' + str(game_id) + '/posts')
-    else: 
+    else:
         form = PostForm(None)
     return render(request, 'posts.html', {
         'data': {
             'game': game,
             'user': user,
             'posts': posts,
+            'game_id': game_id,
         },
         'form': form,
     })
@@ -265,11 +288,19 @@ def comments_view(request, game_id, post_id):
 def reviews_view(request, game_id):
     game = Game.objects.filter(igdb_id=game_id).first()
     user = request.user.profile if request.user.is_authenticated else None
-    reviews = Review.objects.filter(game=game)
+    reviews = Review.objects.filter(game=game).order_by('-date')
     form = ReviewForm(None or request.POST)
+    review = Review.objects.filter(game=game, profile=user)
     if request.method == 'POST':
         if form.is_valid():
             if not game:
+                game = requests.get(
+                    "https://api-endpoint.igdb.com/games/" + str(game_id),
+                    headers={
+                        'user-key': '28db14f003075ce68766bfe55e7e9279',
+                        'accept': 'application/json',
+                    }
+                ).json()[0]
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
@@ -290,6 +321,13 @@ def reviews_view(request, game_id):
             'game': game,
             'user': user,
             'reviews': reviews,
+            'game_id': game_id,
+            'review': review,
         },
         'form': form,
     })
+
+
+def all_posts_view(request):
+    posts = Post.objects.all().order_by('-date')
+    return render(request, 'all_posts.html', {'data': {'posts': posts}})
