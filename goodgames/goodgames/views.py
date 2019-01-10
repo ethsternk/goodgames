@@ -9,20 +9,9 @@ from datetime import datetime
 from django.db.models import Avg
 
 
-def get_game(game_id):
+def igdb_request(url_extension):
     return requests.get(
-        "https://api-endpoint.igdb.com/games/" + str(game_id),
-        headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
-            'accept': 'application/json',
-        }
-    ).json()[0]
-
-
-def search_games(search_terms):
-    return requests.get(
-        'https://api-endpoint.igdb.com/games/?search=' +
-        search_terms + '&fields=id,name,cover',
+        "https://api-endpoint.igdb.com/games/" + str(url_extension),
         headers={
             'user-key': '28db14f003075ce68766bfe55e7e9279',
             'accept': 'application/json',
@@ -43,21 +32,15 @@ def home_view(request):
     if request.method == 'POST':
         if form.is_valid():
             data = form.cleaned_data
-            results = search_games(data['search'])
+            results = igdb_request(
+                '?search=' + data['search'] + '&fields=id,name,cover')
             return render(request, 'search.html', {
                 'data': {'results': results},
                 'form': form,
             })
-    popular = requests.get(
-        'https://api-endpoint.igdb.com/games/'
-        '?fields=id,name,cover,summary,popularity&order=popularity:desc',
-        headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
-            'accept': 'application/json',
-        }
-    ).json()
-    top1 = popular[0:4]
-    top2 = popular[5:9]
+    popular = igdb_request(
+        '?fields=id,name,cover,summary,popularity&order=popularity:desc')
+    top1, top2 = popular[:4], popular[5:9]
     return render(request, 'home.html', {
         'data': {
             'user': user,
@@ -70,7 +53,7 @@ def home_view(request):
 
 def game_view(request, game_id):
     user = request.user.profile if request.user.is_authenticated else None
-    game = get_game(game_id)
+    game = igdb_request(game_id)[0]
     game_instance = Game.objects.filter(igdb_id=game_id).first()
     reviews = Review.objects.filter(game=game_instance)
     score = "%.1f" % reviews.aggregate(
@@ -148,7 +131,7 @@ def wishlist_add_view(request, game_id):
     if Game.objects.filter(igdb_id=game_id):
         user.wishlist.add(Game.objects.filter(igdb_id=game_id).first())
     else:
-        game = get_game(game_id)
+        game = igdb_request(game_id)[0]
         new_game = Game.objects.create(
             igdb_id=game_id,
             name=game['name'],
@@ -163,7 +146,7 @@ def collection_add_view(request, game_id):
     if Game.objects.filter(igdb_id=game_id):
         user.collection.add(Game.objects.filter(igdb_id=game_id).first())
     else:
-        game = get_game(game_id)
+        game = igdb_request(game_id)[0]
         new_game = Game.objects.create(
             igdb_id=game_id,
             name=game['name'],
@@ -193,7 +176,8 @@ def search_view(request):
     if request.method == 'POST':
         if form.is_valid():
             data = form.cleaned_data
-            results = search_games(data['search'])
+            results = igdb_request(
+                '?search=' + data['search'] + '&fields=id,name,cover')
     return render(request, 'search.html', {
         'data': {'results': results},
         'form': form,
@@ -208,7 +192,7 @@ def posts_view(request, game_id):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             if not game:
-                game = get_game(game_id)
+                game = igdb_request(game_id)[0]
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
@@ -277,7 +261,7 @@ def reviews_view(request, game_id):
     if request.method == 'POST':
         if form.is_valid():
             if not game:
-                game = get_game(game_id)
+                game = igdb_request(game_id)[0]
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
