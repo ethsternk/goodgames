@@ -9,6 +9,16 @@ from datetime import datetime
 from django.db.models import Avg
 
 
+def get_game(game_id):
+    return requests.get(
+        "https://api-endpoint.igdb.com/games/" + str(game_id),
+        headers={
+            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'accept': 'application/json',
+        }
+    ).json()[0]
+
+
 def splash_view(request):
     if request.user.username:
         return HttpResponseRedirect(reverse('homepage'))
@@ -56,13 +66,7 @@ def home_view(request):
 
 def game_view(request, game_id):
     user = request.user.profile if request.user.is_authenticated else None
-    game = requests.get(
-        "https://api-endpoint.igdb.com/games/" + str(game_id),
-        headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
-            'accept': 'application/json',
-        }
-    ).json()[0]
+    game = get_game(game_id)
     game_instance = Game.objects.filter(igdb_id=game_id).first()
     reviews = Review.objects.filter(game=game_instance)
     score = "%.1f" % reviews.aggregate(
@@ -140,13 +144,7 @@ def wishlist_add_view(request, game_id):
     if Game.objects.filter(igdb_id=game_id):
         user.wishlist.add(Game.objects.filter(igdb_id=game_id).first())
     else:
-        game = requests.get(
-            "https://api-endpoint.igdb.com/games/" + str(game_id),
-            headers={
-                'user-key': '28db14f003075ce68766bfe55e7e9279',
-                'accept': 'application/json',
-            }
-        ).json()[0]
+        game = get_game(game_id)
         new_game = Game.objects.create(
             igdb_id=game_id,
             name=game['name'],
@@ -161,13 +159,7 @@ def collection_add_view(request, game_id):
     if Game.objects.filter(igdb_id=game_id):
         user.collection.add(Game.objects.filter(igdb_id=game_id).first())
     else:
-        game = requests.get(
-            "https://api-endpoint.igdb.com/games/" + str(game_id),
-            headers={
-                'user-key': '28db14f003075ce68766bfe55e7e9279',
-                'accept': 'application/json',
-            }
-        ).json()[0]
+        game = get_game(game_id)
         new_game = Game.objects.create(
             igdb_id=game_id,
             name=game['name'],
@@ -219,13 +211,7 @@ def posts_view(request, game_id):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             if not game:
-                game = requests.get(
-                    "https://api-endpoint.igdb.com/games/" + str(game_id),
-                    headers={
-                        'user-key': '28db14f003075ce68766bfe55e7e9279',
-                        'accept': 'application/json',
-                    }
-                ).json()[0]
+                game = get_game(game_id)
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
@@ -294,13 +280,7 @@ def reviews_view(request, game_id):
     if request.method == 'POST':
         if form.is_valid():
             if not game:
-                game = requests.get(
-                    "https://api-endpoint.igdb.com/games/" + str(game_id),
-                    headers={
-                        'user-key': '28db14f003075ce68766bfe55e7e9279',
-                        'accept': 'application/json',
-                    }
-                ).json()[0]
+                game = get_game(game_id)
                 game = Game.objects.create(
                     igdb_id=game_id,
                     name=game['name'],
