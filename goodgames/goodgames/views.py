@@ -7,13 +7,14 @@ from django.contrib.auth import login, authenticate, logout
 import requests
 from datetime import datetime
 from django.db.models import Avg
+from goodgames.settings import IGDB_API_KEY
 
 
 def igdb_request(url_extension):
     return requests.get(
         "https://api-endpoint.igdb.com/games/" + str(url_extension),
         headers={
-            'user-key': '28db14f003075ce68766bfe55e7e9279',
+            'user-key': IGDB_API_KEY,
             'accept': 'application/json',
         }
     ).json()

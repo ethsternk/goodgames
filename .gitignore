@@ -2,3 +2,4 @@
 .DS_Store
 goodgames/goodgames/__pycache__/
 goodgames/goodgames/migrations/__pycache__/
+goodgames/goodgames/.env
