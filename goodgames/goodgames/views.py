@@ -64,8 +64,10 @@ def game_view(request, game_id):
             'game': game,
             'user': user,
             'score': score,
-            'in_coll': game_instance in user.collection.all(),
-            'in_wish': game_instance in user.wishlist.all()
+            'in_coll': (game_instance in user.collection.all()
+                        if user else None),
+            'in_wish': (game_instance in user.wishlist.all()
+                        if user else None),
         }
     })
 
