@@ -13,10 +13,10 @@ admin.site.register(Review)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home_view, name="homepage"),
+    path('', views.homeView.as_view(), name="homepage"),
     path('splash/', views.splash_view),
-    path('login/', views.login_view),
-    path('signup/', views.signup_view),
+    path('login/', views.loginView.as_view()),
+    path('signup/', views.signupView.as_view()),
     path('logout/', views.logout_view),
     path('game/<int:game_id>', views.game_view),
     path('game/<int:game_id>/wishlist_add', views.wishlist_add_view),
@@ -35,3 +35,6 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
+
+handler404 = 'goodgames.views.handler404'
+handler500 = 'goodgames.views.handler500'

@@ -8,6 +8,22 @@ import requests
 from datetime import datetime
 from django.db.models import Avg
 from goodgames.settings import IGDB_API_KEY
+from django.views.generic import TemplateView
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+
+def handler404(request, exception, template_name="404.html"):
+    response = render_to_response("404.html")
+    response.status_code = 404
+    return response
+
+
+def handler500(request, *args, **argv):
+    response = render_to_response('500.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
 
 
 def igdb_request(url_extension):
@@ -27,29 +43,46 @@ def splash_view(request):
         return render(request, 'splash.html')
 
 
-def home_view(request):
-    user = request.user.profile if request.user.is_authenticated else None
-    form = SearchForm(None or request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            data = form.cleaned_data
-            results = igdb_request(
-                '?search=' + data['search'] + '&fields=id,name,cover')
-            return render(request, 'search.html', {
-                'data': {'results': results},
-                'form': form,
-            })
-    popular = igdb_request(
-        '?fields=id,name,cover,summary,popularity&order=popularity:desc')
-    top1, top2 = popular[:4], popular[5:9]
-    return render(request, 'home.html', {
-        'data': {
-            'user': user,
-            'top1': top1,
-            'top2': top2
-        },
-        'form': form,
-    })
+class homeView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user.profile if request.user.is_authenticated else None
+        form = SearchForm(None)
+        popular = igdb_request(
+            '?fields=id,name,cover,summary,popularity&order=popularity:desc')
+        top1, top2 = popular[:4], popular[5:9]
+        return render(request, 'home.html', {
+            'data': {
+                'user': user,
+                'top1': top1,
+                'top2': top2
+            },
+            'form': form,
+        })
+
+    def post(self, request, *args, **kwargs):
+        user = request.user.profile if request.user.is_authenticated else None
+        form = SearchForm(request.POST)
+        if request.method == 'POST':
+            if form.is_valid():
+                data = form.cleaned_data
+                results = igdb_request(
+                    '?search=' + data['search'] + '&fields=id,name,cover')
+                return render(request, 'search.html', {
+                    'data': {'results': results},
+                    'form': form,
+                })
+        popular = igdb_request(
+            '?fields=id,name,cover,summary,popularity&order=popularity:desc')
+        top1, top2 = popular[:4], popular[5:9]
+        return render(request, 'home.html', {
+            'data': {
+                'user': user,
+                'top1': top1,
+                'top2': top2
+            },
+            'form': form,
+        })
 
 
 def game_view(request, game_id):
@@ -91,37 +124,51 @@ def profile_view(request, profile_id):
     }})
 
 
-def signup_view(request):
-    html = 'signup.html'
-    form = SignupForm(None or request.POST)
-    if form.is_valid():
-        data = form.cleaned_data
-        user = User.objects.create_user(
-            data['username'], data['email'], data['password'])
-        Profile.objects.create(
-            name=user.username,
-            user=user,
-        )
-        login(request, user)
-        return HttpResponseRedirect(reverse('homepage'))
-    return render(request, html, {'form': form})
+class signupView(TemplateView):
 
+    def get(self, request, *args, **kwargs):
+        form = SignupForm(None)
+        html = 'signup.html'
+        return render(request, html, {'form': form})
 
-def login_view(request):
-    html = 'login.html'
-    form = LoginForm(None or request.POST)
-    if form.is_valid():
-        next = request.POST.get('next')
-        data = form.cleaned_data
-        user = authenticate(
-            username=data['username'], password=data['password'])
-        if user is not None:
+    def post(self, request, *args, **kwargs):
+        form = SignupForm(request.POST)
+        html = 'signup.html'
+        if form.is_valid():
+            data = form.cleaned_data
+            user = User.objects.create_user(
+                data['username'], data['email'], data['password'])
+            Profile.objects.create(
+                name=user.username,
+                user=user,
+            )
             login(request, user)
-            if next:
-                return HttpResponseRedirect(next)
-            else:
-                return HttpResponseRedirect(reverse('homepage'))
-    return render(request, html, {'form': form})
+            return HttpResponseRedirect(reverse('homepage'))
+        return render(request, html, {'form': form})
+
+
+class loginView(TemplateView):
+
+    def post(self, request, *args, **kwargs):
+        html = 'login.html'
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            next = request.POST.get('next')
+            data = form.cleaned_data
+            user = authenticate(
+                username=data['username'], password=data['password'])
+            if user is not None:
+                login(request, user)
+                if next:
+                    return HttpResponseRedirect(next)
+                else:
+                    return HttpResponseRedirect(reverse('homepage'))
+        return render(request, html, {'form': form})
+
+    def get(self, request, *args, **kwargs):
+        html = 'login.html'
+        form = LoginForm(None)
+        return render(request, html, {'form': form})
 
 
 def logout_view(request):
